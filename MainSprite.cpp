@@ -25,11 +25,20 @@ MainSprite* MainSprite::createWithPos(const char* name, Pos p)
 bool MainSprite::init(const char* name)
 {
     visibleSize = Director::getInstance()->getVisibleSize();
-    this->initWithFile(name);
+    if(!this->initWithFile(name)) return false;
+    
     if(_p == Pos::top)
-    this->setPosition(Vec2(visibleSize.width/2,visibleSize.height - this->getContentSize().height));
-    if(_p == Pos::bottom)
-    this->setPosition(Vec2(visibleSize.width/2, this->getContentSize().height));
+    {
+        this->setPosition(Vec2(visibleSize.width/2,visibleSize.height - this->getContentSize().height));
+    }
+    else if(_p == Pos::bottom)
+    {
+        this->setPosition(Vec2(visibleSize.width/2, this->getContentSize().height));
+    }
+    else
+    {
+        this->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
+    }
     return true;
 }
 
@@ -38,10 +47,10 @@ void MainSprite::update()
 {
     if(_p == Pos::top)
     {
-        if(this->getPosition().y <=  visibleSize.height/2)
-            this->setPosition(Vec2(this->getPosition().x,visibleSize.height / 2 + this->getContentSize().height));
+        if(this->getPosition().y <=  visibleSize.height/2 + radius())
+            this->setPosition(Vec2(this->getPosition().x,visibleSize.height / 2 + radius()));
     }else{
-        if(this->getPosition().y >=  visibleSize.height/2)
-            this->setPosition(Vec2(this->getPosition().x,visibleSize.height / 2 - this->getContentSize().height));
+        if(this->getPosition().y >=  visibleSize.height/2 - radius())
+            this->setPosition(Vec2(this->getPosition().x,visibleSize.height / 2 - radius()));
     }
 }

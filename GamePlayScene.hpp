@@ -19,10 +19,12 @@ public:
     static cocos2d::Scene* createScene();
     MainSprite* player1;
     MainSprite* player2;
+    MainSprite* ball;
     HUBLayer* hub;
     
 private:
     cocos2d::Size visibleSize;
+    cocos2d::Vector<MainSprite*> players;
     
 private:
     CREATE_FUNC(GamePlayScene);
@@ -30,7 +32,13 @@ private:
     bool init() override;
     
     void update(float dt) override;
-
+    
+    void isTouchable(bool b);
+    
+    void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;
+    void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;
+    void onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;
+    
     
 };
 
