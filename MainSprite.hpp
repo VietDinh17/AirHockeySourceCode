@@ -11,23 +11,45 @@
 
 #include <cocos2d.h>
 
-enum class Pos{top, middle, bottom};
+enum class Who{topPlayer, bottomPlayer, ball};
 
 class MainSprite : public cocos2d::Sprite
 {
 public:
-    MainSprite(Pos p) : _p{p}{}
-    static MainSprite* createWithPos(const char* name, Pos position);
+    Who whoScored;
+    cocos2d::Vec2 initalPosition;
+    
+public:
+    static MainSprite* createWithPos(const char* name, Who position);
+    
+    CC_SYNTHESIZE(cocos2d::Touch*, _touch, Touch);
+    CC_SYNTHESIZE(cocos2d::Vec2, _vector, Vector);
+    CC_SYNTHESIZE(cocos2d::Vec2, _nextPosition, NextPosition);
+    
+    void setPosition(const cocos2d::Vec2& pos) override;
+    
     void update();
-    Pos getP() const { return _p; }
+    
+    inline Who getP() const { return _p; }
+    
     inline float radius() { return this->getContentSize().width/2; }
+    
+    bool isGoaled();
+    
 private:
-    Pos _p;
+    MainSprite(Who p) : _p{p}, _vector{cocos2d::Vec2(0,0)} {}
+    Who _p;
     cocos2d::Size visibleSize;
     
 private:
     bool init(const char* name);
-    CC_SYNTHESIZE(cocos2d::Touch*, _touch, Touch);
+    
+    void keepPlayerInside();
+    
+    bool isGoalRange();
+    
+    void bouchBack();
+    
 };
 
 #endif /* MainSprite_hpp */

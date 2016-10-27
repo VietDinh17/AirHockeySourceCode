@@ -22,7 +22,7 @@ bool HUBLayer::init()
 void HUBLayer::initLabel()
 {
     label1 = Label::createWithBMFont("PixelFont.fnt", "0");
-    label1->setPosition(Vec2(label1->getContentSize().width,
+    label1->setPosition(Vec2(visibleSize.width - label1->getContentSize().width,
                              visibleSize.height/2 + label1->getContentSize().height));
     label1->setRotation(180);
     label1->setScale(0.9);

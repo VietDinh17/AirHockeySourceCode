@@ -22,9 +22,13 @@ public:
     MainSprite* ball;
     HUBLayer* hub;
     
+    int player1Score;
+    int player2Score;
+    
 private:
     cocos2d::Size visibleSize;
     cocos2d::Vector<MainSprite*> players;
+    cocos2d::Vec2 diff;
     
 private:
     CREATE_FUNC(GamePlayScene);
@@ -34,6 +38,14 @@ private:
     void update(float dt) override;
     
     void isTouchable(bool b);
+    
+    void ballAndPlayerCollison();
+    
+    bool isCollied(MainSprite* player);
+    
+    void resetAfterGoaled();
+    
+    void setScore();
     
     void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;
     void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;

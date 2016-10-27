@@ -7,7 +7,7 @@
 //
 
 #include "GamePlayScene.hpp"
-
+#define FRICTION 0.96
 
 USING_NS_CC;
 
@@ -32,14 +32,16 @@ bool GamePlayScene::init()
     bg->setPosition(visibleSize.width/2, visibleSize.height/2);
     this->addChild(bg,0);
     
-    player1 = MainSprite::createWithPos("mallet.png",Pos::top);
-    player2 = MainSprite::createWithPos("mallet.png",Pos::bottom);
+    player1Score = 0;
+    player2Score = 0;
+    player1 = MainSprite::createWithPos("mallet.png",Who::topPlayer);
+    player2 = MainSprite::createWithPos("mallet.png",Who::bottomPlayer);
     players.pushBack(player1);
     players.pushBack(player2);
     this->addChild(player1,1);
     this->addChild(player2,1);
     
-    ball = MainSprite::createWithPos("puck.png", Pos::middle);
+    ball = MainSprite::createWithPos("puck.png", Who::ball);
     this->addChild(ball,1);
     
     hub = HUBLayer::create();
@@ -53,8 +55,105 @@ bool GamePlayScene::init()
 
 void GamePlayScene::update(float dt)
 {
+    
     player1->update();
     player2->update();
+    ballAndPlayerCollison();
+    ball->update();
+    resetAfterGoaled();
+    hub->update(player1Score, player2Score);
+   
+}
+
+void GamePlayScene::ballAndPlayerCollison()
+{
+    Vec2 ballNextPosition = ball->getNextPosition();
+    Vec2 ballVector = ball->getVector();
+    ballVector *= FRICTION;
+    ballNextPosition += ballVector;
+    
+    
+    for(const auto& player : players)
+    {
+        if(player != nullptr)
+        {
+            auto playerNextPosition = player->getNextPosition();
+            auto playerVector = player->getVector();
+            if(isCollied(player))
+            {
+                float mag_ball = pow(ballVector.x, 2) + pow(ballVector.y, 2);
+                float mag_player = pow(playerVector.x, 2) + pow (playerVector.y,2);
+                float force = sqrt(mag_ball + mag_player);
+                float angle = atan2(diff.y, diff.x);
+                ballVector.x = force * cos(angle);
+                ballVector.y = force * sin(angle);
+                ballNextPosition.x = playerNextPosition.x + (player->radius() + ball->radius() + force) * cos(angle);
+                ballNextPosition.y = playerNextPosition.y + (player->radius() + ball->radius() + force) * sin(angle);
+            }
+        }
+    }
+    ball->setVector(ballVector);
+    ball->setNextPosition(ballNextPosition);
+    
+}
+
+void GamePlayScene::setScore()
+{
+    
+    if(ball->whoScored == Who::topPlayer)
+    {
+        player1Score += 1;
+    }else{
+        player2Score += 1;
+    }
+
+}
+
+
+bool GamePlayScene::isCollied(MainSprite* player)
+{
+    float colliedDistance = powf(ball->radius()+player->radius(),2);
+    if(ball->getNextPosition().x == 0 && ball->getNextPosition().y == 0)
+    {
+        diff = Vec2(ball->getPositionX() - player->getNextPosition().x,
+                      ball->getPositionY() - player->getNextPosition().y);
+    }else{
+        diff = Vec2(ball->getNextPosition().x - player->getPosition().x,
+                 ball->getNextPosition().y - player->getPosition().y);
+    }
+    
+    float distance = powf(diff.x,2) + powf(diff.y,2);
+    
+    if(distance <= colliedDistance)
+    {
+        return true;
+    }
+    return false;
+}
+
+void GamePlayScene::resetAfterGoaled()
+{
+    if(ball->isGoaled())
+    {
+        setScore();
+        ball->setVector(Vec2::ZERO);
+        ball->setNextPosition(Vec2::ZERO);
+        
+        if(ball->whoScored == Who::topPlayer)
+        {
+            ball->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2 - ball->radius()*1.25));
+        }else{
+            ball->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2 + ball->radius()*1.25));
+        }
+        
+        player1->setNextPosition(Vec2::ZERO);
+        player1->setPosition(player1->initalPosition);
+        player1->setTouch(nullptr);
+        
+        player2->setNextPosition(Vec2::ZERO);
+        player2->setPosition(player2->initalPosition);
+        player2->setTouch(nullptr);
+    }
 }
 
 void GamePlayScene::isTouchable(bool b)
@@ -97,15 +196,8 @@ void GamePlayScene::onTouchesMoved(const std::vector<Touch*>& touches, Event* ev
             {
                 if(player->getTouch() != nullptr && player->getTouch() == touch)
                 {
-                    Vec2 nextPosition = tap;
-                    if(nextPosition.x < player->radius()) nextPosition.x = player->radius();
-                    if(nextPosition.y < player->radius()) nextPosition.y = player->radius();
-                    if(nextPosition.x > visibleSize.width - player->radius())
-                        nextPosition.x = visibleSize.width - player->radius();
-                    if(nextPosition.y > visibleSize.height - player->radius())
-                        nextPosition.y = visibleSize.height - player->radius();
-                    
-                    player->setPosition(nextPosition);
+                    player->setNextPosition(tap);
+                    player->setVector(Vec2(tap.x - player->getPositionX(),tap.y - player->getPositionY()));
                 }
                 
             }
@@ -122,9 +214,7 @@ void GamePlayScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* ev
             for(auto player : players)
             {
                 if(player->getTouch() != nullptr && player->getTouch() == touch)
-                {
                     player->setTouch(nullptr);
-                }
             }
         }
     }
