@@ -7,6 +7,7 @@
 //
 
 #include "MainSprite.hpp"
+#include "SimpleAudioEngine.h"
 #define GOAL_WIDTH 400
 
 USING_NS_CC;
@@ -99,6 +100,11 @@ void MainSprite::bouchBack()
                 _vector.y *= -0.8f;
             }
         }
+        
+        if(_nextPosition.x <= radius() || _nextPosition.x >= visibleSize.width - radius() ||
+           _nextPosition.y <= radius() || _nextPosition.y >= visibleSize.height - radius())
+            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("hit.wav",false,1.0f,1.0f,10.0f);
+           
         this->setPosition(_nextPosition);
     }
     

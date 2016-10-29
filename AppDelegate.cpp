@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "MenuLayer.hpp"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -82,6 +83,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     fileUtil->setSearchPaths(searchPaths);
     fileUtil->addSearchPath("customFont");
     
+    auto audioEngine = CocosDenshion::SimpleAudioEngine::getInstance();
+    audioEngine->preloadEffect("hit.wav");
+    audioEngine->preloadEffect("score.wav");
 
     // create a scene. it's an autorelease object
     auto scene = MenuLayer::createScene();

@@ -41,7 +41,7 @@ bool MenuLayer::init()
 
 void MenuLayer::createButtons()
 {
-    playButton = MenuItemImage::create("_bookgame_UI_play.png", "_bookgame_UI_play.png",
+    playButton = MenuItemImage::create("logo.png", "logo.png",
                                        CC_CALLBACK_0(MenuLayer::callPlayScene, this));
     playButton->setPosition(visibleSize.width/2,visibleSize.height/2);
     

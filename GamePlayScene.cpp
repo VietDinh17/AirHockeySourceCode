@@ -7,6 +7,8 @@
 //
 
 #include "GamePlayScene.hpp"
+#include "audio/include/AudioEngine.h"
+#include "SimpleAudioEngine.h"
 #define FRICTION 0.96
 
 USING_NS_CC;
@@ -126,6 +128,7 @@ bool GamePlayScene::isCollied(MainSprite* player)
     
     if(distance <= colliedDistance)
     {
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("hit.wav",false,1.0f,1.0f,5.0f);
         return true;
     }
     return false;
@@ -135,6 +138,8 @@ void GamePlayScene::resetAfterGoaled()
 {
     if(ball->isGoaled())
     {
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("score.wav");
+        
         setScore();
         ball->setVector(Vec2::ZERO);
         ball->setNextPosition(Vec2::ZERO);
