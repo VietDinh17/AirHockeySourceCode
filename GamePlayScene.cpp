@@ -175,15 +175,18 @@ void GamePlayScene::isTouchable(bool b)
 
 void GamePlayScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event)
 {
-    for(auto touch : touches)
+    if(!hub->isPaused)
     {
-        if(touch != nullptr)
+        for(auto touch : touches)
         {
-            auto tap = touch->getLocation();
-            for( auto player : players)
+            if(touch != nullptr)
             {
-                if(player->getBoundingBox().containsPoint(tap))
-                    player->setTouch(touch);
+                auto tap = touch->getLocation();
+                for( auto player : players)
+                {
+                    if(player->getBoundingBox().containsPoint(tap))
+                        player->setTouch(touch);
+                }
             }
         }
     }

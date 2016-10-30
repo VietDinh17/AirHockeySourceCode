@@ -16,7 +16,6 @@
 class GamePlayScene : public cocos2d::Layer
 {
 public:
-    static cocos2d::Scene* createScene();
     MainSprite* player1;
     MainSprite* player2;
     MainSprite* ball;
@@ -24,6 +23,10 @@ public:
     
     int player1Score;
     int player2Score;
+    
+public:
+    static cocos2d::Scene* createScene();
+
     
 private:
     cocos2d::Size visibleSize;
@@ -37,8 +40,6 @@ private:
     
     void update(float dt) override;
     
-    void isTouchable(bool b);
-    
     void ballAndPlayerCollison();
     
     bool isCollied(MainSprite* player);
@@ -46,6 +47,8 @@ private:
     void resetAfterGoaled();
     
     void setScore();
+    
+    void isTouchable(bool b);
     
     void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;
     void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event) override;

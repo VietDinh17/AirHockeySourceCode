@@ -20,8 +20,7 @@ public:
 private:
     cocos2d::Size visibleSize;
     cocos2d::MenuItemImage* playButton;
-    cocos2d::MenuItemImage* optionButton;
-    cocos2d::MenuItemImage* homeButton;
+    
     
 private:
     CREATE_FUNC(MenuLayer);
@@ -29,8 +28,6 @@ private:
     bool init() override;
     void createButtons();
     void callPlayScene();
-    void callOptionLayer();
-    void callBackScene();
 
 };
 
